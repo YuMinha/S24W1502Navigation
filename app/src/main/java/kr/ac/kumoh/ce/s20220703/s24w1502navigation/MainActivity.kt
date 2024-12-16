@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -95,10 +96,10 @@ fun MainScreen() {
                 modifier = Modifier.padding(innerPadding),
             ) {
                 composable("screen1") {
-                    FirstScreen(navController)
+                    FirstScreen()
                 }
                 composable("screen2") {
-                    SecondScreen(navController)
+                    SecondScreen()
                 }
             }
         }
@@ -110,7 +111,7 @@ fun BottomNavigationBar(onNavigate: (String) -> Unit) {
     NavigationBar {
         NavigationBarItem(
             label = {
-                Text("화면 1")
+                Text("가수")
             },
             icon = {
                 Icon(
@@ -125,7 +126,7 @@ fun BottomNavigationBar(onNavigate: (String) -> Unit) {
         )
         NavigationBarItem(
             label = {
-                Text("화면 2")
+                Text("노래")
             },
             icon = {
                 Icon(
@@ -206,7 +207,7 @@ fun DrawerSheet(
 
     ModalDrawerSheet {
         NavigationDrawerItem(
-            label = { Text("화면 1") },
+            label = { Text("가수") },
             selected = false,
             onClick = {
                 onNavigate("screen1")
@@ -222,7 +223,7 @@ fun DrawerSheet(
             }
         )
         NavigationDrawerItem(
-            label = { Text("화면 2") },
+            label = { Text("노래") },
             selected = false,
             onClick = {
                 onNavigate("screen2")
@@ -241,37 +242,23 @@ fun DrawerSheet(
 }
 
 @Composable
-fun FirstScreen(navController: NavController) {
-    Column {
-        Text("화면 1")
-        Button(
-            onClick = {
-                navController.navigate("screen2") {
-                    // 이미 화면이 스택에 있다면 새로 만들지 않고 기존 화면으로 이동
-                    launchSingleTop = true
-                    popUpTo("screen2") { inclusive = true }
-                }
-            }
-        ) {
-            Text("화면 2로 이동")
-        }
+fun FirstScreen() {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.primary)
+    ) {
+        Text("가수")
     }
 }
 
 @Composable
-fun SecondScreen(navController: NavController) {
-    Column {
-        Text("화면 2")
-        Button(
-            onClick = {
-                navController.navigate("screen1") {
-                    // 이미 화면이 스택에 있다면 새로 만들지 않고 기존 화면으로 이동
-                    launchSingleTop = true
-                    popUpTo("screen1") { inclusive = true }
-                }
-            }
-        ) {
-            Text("화면 1로 이동")
-        }
+fun SecondScreen() {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.inversePrimary)
+    ) {
+        Text("노래")
     }
 }
