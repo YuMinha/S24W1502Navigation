@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DrawerState
@@ -21,6 +22,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -57,10 +60,10 @@ fun MainScreen() {
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            DrawerSheet(drawerState){
-                navController.navigate(it){
+            DrawerSheet(drawerState) {
+                navController.navigate(it) {
                     launchSingleTop = true
-                    popUpTo("screen2") { inclusive = true }
+                    popUpTo(it) { inclusive = true }
                 }
             }
         },
@@ -71,10 +74,21 @@ fun MainScreen() {
             topBar = {
                 TopBar(drawerState)
             },
-            )
-            { innerPadding ->
-            val navController = rememberNavController()
-
+            bottomBar = {
+//                BottomBar {
+//                    navController.navigate(it) {
+//                        launchSingleTop = true
+//                        popUpTo(it) { inclusive = true }
+//                    }
+//                }
+                BottomNavigationBar {
+                    navController.navigate(it) {
+                        launchSingleTop = true
+                        popUpTo(it) { inclusive = true }
+                    }
+                }
+            },
+        ) { innerPadding ->
             NavHost(
                 navController = navController,
                 startDestination = "screen1",
@@ -90,6 +104,70 @@ fun MainScreen() {
         }
     }
 }
+
+@Composable
+fun BottomNavigationBar(onNavigate: (String) -> Unit) {
+    NavigationBar {
+        NavigationBarItem(
+            label = {
+                Text("화면 1")
+            },
+            icon = {
+                Icon(
+                    Icons.Filled.Face,
+                    contentDescription = "screen1 icon"
+                )
+            },
+            selected = false,
+            onClick = {
+                onNavigate("screen1")
+            }
+        )
+        NavigationBarItem(
+            label = {
+                Text("화면 2")
+            },
+            icon = {
+                Icon(
+                    Icons.Filled.Star,
+                    contentDescription = "screen2 icon"
+                )
+            },
+            selected = false,
+            onClick = {
+                onNavigate("screen2")
+            }
+        )
+    }
+}
+
+//@Composable
+//fun BottomBar(onNavigate: (String) -> Unit) {
+//    BottomAppBar(
+//        actions = {
+//            IconButton(
+//                onClick = {
+//                    onNavigate("screen1")
+//                }
+//            ) {
+//                Icon(
+//                    Icons.Filled.Face,
+//                    contentDescription = "screen1 icon"
+//                )
+//            }
+//            IconButton(
+//                onClick = {
+//                    onNavigate("screen2")
+//                }
+//            ) {
+//                Icon(
+//                    Icons.Filled.Star,
+//                    contentDescription = "screen2 icon"
+//                )
+//            }
+//        }
+//    )
+//}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -118,6 +196,7 @@ fun TopBar(drawerState: DrawerState) {
         ),
     )
 }
+
 @Composable
 fun DrawerSheet(
     drawerState: DrawerState,
@@ -161,14 +240,14 @@ fun DrawerSheet(
     }
 }
 
-
 @Composable
 fun FirstScreen(navController: NavController) {
     Column {
         Text("화면 1")
         Button(
             onClick = {
-                navController.navigate("screen2"){
+                navController.navigate("screen2") {
+                    // 이미 화면이 스택에 있다면 새로 만들지 않고 기존 화면으로 이동
                     launchSingleTop = true
                     popUpTo("screen2") { inclusive = true }
                 }
@@ -185,9 +264,10 @@ fun SecondScreen(navController: NavController) {
         Text("화면 2")
         Button(
             onClick = {
-                navController.navigate("screen1"){
+                navController.navigate("screen1") {
+                    // 이미 화면이 스택에 있다면 새로 만들지 않고 기존 화면으로 이동
                     launchSingleTop = true
-                    popUpTo("screen2") { inclusive = true }
+                    popUpTo("screen1") { inclusive = true }
                 }
             }
         ) {
