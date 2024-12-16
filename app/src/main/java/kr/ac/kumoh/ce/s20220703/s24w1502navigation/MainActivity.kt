@@ -5,15 +5,23 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
@@ -33,11 +41,16 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import kotlinx.coroutines.launch
 import kr.ac.kumoh.ce.s20220703.s24w1502navigation.ui.theme.S24W1502NavigationTheme
 
@@ -99,10 +112,46 @@ fun MainScreen() {
                     FirstScreen()
                 }
                 composable("screen2") {
-                    SecondScreen()
+                    SecondScreen {
+                        navController.navigate("screen_detail/${it}") {
+                            launchSingleTop = true
+                            popUpTo("screen_detail") { inclusive = true }
+                        }
+                    }
+                }
+                composable(
+                    route = "screen_detail/{songId}",
+                    arguments = listOf(
+                        navArgument("songId") {
+                            type = NavType.IntType
+                        },
+                    )
+                ) {
+                    DetailScreen(it.arguments?.getInt("songId"))
+                }
                 }
             }
         }
+    }
+
+
+@Composable
+fun DetailScreen(songId: Int?) {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
+        verticalArrangement = Arrangement.Center,
+
+        ) {
+        Text(
+            text = "노래 $songId",
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            fontSize = 100.sp,
+            textAlign = TextAlign.Center,
+        )
     }
 }
 
@@ -253,12 +302,41 @@ fun FirstScreen() {
 }
 
 @Composable
-fun SecondScreen() {
+fun SecondScreen(onNavigate: (Int) -> Unit) {
     Column(
         Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.inversePrimary)
     ) {
-        Text("노래")
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            contentPadding = PaddingValues(horizontal = 8.dp)
+        ) {
+            items(30) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(100.dp)
+                        .clickable {
+                            onNavigate(it)
+                        },
+                    colors = CardDefaults.cardColors(
+                        MaterialTheme.colorScheme
+                            .surfaceVariant,
+                    ),
+                    elevation = CardDefaults
+                        .cardElevation(16.dp),
+                ) {
+                    Text(
+                        text = "노래 $it",
+                        modifier = Modifier
+                            .padding(16.dp),
+                        fontSize = 30.sp,
+                        textAlign = TextAlign.Center,
+                    )
+                }
+            }
+        }
     }
 }
